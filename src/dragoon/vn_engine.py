@@ -65,8 +65,16 @@ class VNEngine:
         print("=" * self.width)
         print("\n" * self.padding, end="")
 
-    def bottom_text(self, text):
+    def bottom_text(self, text, speaker=None):
+        """
+        Display text at the bottom of the screen.
+        Optionally show who is speaking.
+        """
         self.clear()
+
+        if speaker:
+            text = f"{speaker}: {text}"
+
         lines = self._wrap_center(text)
         blank = max(0, self._terminal_height() - len(lines) - self.padding)
         print("\n" * blank, end="")
