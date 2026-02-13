@@ -123,6 +123,51 @@ class VNEngine:
         self.set(key, value)
         return value
 
+    def ask_multiple(self, key, question, options, multiple=False, default=None):
+        """
+        Ask the player to select one or more options
+
+        Parameters:
+        - key: state key to save
+        - question: prompt text
+        - options: list of strings
+        - multiple: if True, allow multiple selections
+        - default: default selection(s) if input is empty
+        """
+
+        self.banner(question)
+
+        # Display options numbered
+        for idx, option in enumerate(options, 1):
+            print(f"{idx}. {option}")
+        print()
+
+        while True:
+            prompt = "> " if not multiple else "(comma-separated numbers) > "
+            raw = input(prompt).strip()
+
+            if not raw and default is not None:
+                selection = default
+            else:
+                try:
+                    if multiple:
+                        # Allow comma-separated numbers
+                        indices = [int(x) for x in raw.split(",")]
+                        if any(i < 1 or i > len(options) for i in indices):
+                            raise ValueError
+                        selection = [options[i - 1] for i in indices]
+                    else:
+                        idx = int(raw)
+                        if idx < 1 or idx > len(options):
+                            raise ValueError
+                        selection = options[idx - 1]
+                except ValueError:
+                    print("Invalid input. Please enter valid number(s).")
+                    continue
+
+            self.set(key, selection)
+            return selection
+
     # ==============================
     # Story Helpers
     # ==============================

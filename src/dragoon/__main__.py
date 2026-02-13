@@ -53,6 +53,13 @@ Good Morning, {name}.
 """)
     vn.wait()
 
+    vn.ask_multiple(
+        "drink",
+        "What do you want to drink?",
+        ["Coffee", "Tea", "Water"],
+        default="Coffee",
+    )
+
     vn.end_day(3)
 
 
