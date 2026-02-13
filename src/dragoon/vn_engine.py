@@ -111,9 +111,9 @@ class VNEngine:
         self.state[key] = value
         self._save()
 
-    def get(self, key, default=None):
+    def get_value(self, key, default=None):
         """Get a value from state or return default"""
-        return self.state.get(key, default)
+        return self.state.get_value(key, default)
 
     # ==============================
     # Input Helpers
@@ -215,7 +215,7 @@ class VNEngine:
 
     def get_current_day(self):
         """Return the current day from state or 1"""
-        return self.get("current_day", 1)
+        return self.get_value("current_day", 1)
 
     def set_current_day(self, day: int):
         """Update the current day in state"""

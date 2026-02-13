@@ -46,7 +46,7 @@ On the way, you have to cross the road.
 def run_day_002(vn: VNEngine):
     vn.day_screen(2, "A New Morning")
 
-    name = vn.get("name")
+    name = vn.get_value("name")
 
     vn.bottom_text(f"""
 Good Morning, {name}.
@@ -71,12 +71,12 @@ Good Morning, {name}.
 def run_day_003(vn: VNEngine):
     vn.day_screen(3, "Meeting")
 
-    name = vn.get("name")
+    name = vn.get_value("name")
 
     vn.bottom_text(f"Good Morning, {name}.", speaker="Nova")
     vn.wait()
 
-    if vn.get("drink") == "Coffee":
+    if vn.get_value("drink") == "Coffee":
         vn.bottom_text("*kisses you*", speaker="Nova")
     else:
         vn.bottom_text(f"Wake up already, {name}!", speaker="Nova")
