@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 class VNEngine:
-    def __init__(self, width=100, padding=2, save_file="save.json"):
+    def __init__(self, width=100, padding=2, save_file="save_data.json"):
         self.width = width
         self.padding = padding
         self.save_path = Path(save_file)
