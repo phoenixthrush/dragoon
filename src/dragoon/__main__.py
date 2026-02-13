@@ -10,7 +10,7 @@ def run_day_001(vn: VNEngine):
     vn.day_screen(1, "Prologue")
 
     vn.banner("""
-Clayn got stabbed to death and reincarnated as a hero
+You got stabbed to death and reincarnated as a hero
 to fight a dragon that later became his new wife.
 """)
     vn.wait()

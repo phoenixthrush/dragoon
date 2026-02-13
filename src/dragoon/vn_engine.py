@@ -113,7 +113,7 @@ class VNEngine:
 
     def get_value(self, key, default=None):
         """Get a value from state or return default"""
-        return self.state.get_value(key, default)
+        return self.state.get(key, default)
 
     # ==============================
     # Input Helpers
