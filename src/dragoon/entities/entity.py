@@ -1,12 +1,12 @@
 class Entity:
-    __money = 0
-    __rank = 0
-    __inventory = []
-    __stamina = 20
-    __playtime = 0
-    __alive = True
-    __horniness = 0
-    __sleepiness = 0
+    _money = 0
+    _rank = 0
+    _inventory = []
+    _stamina = 20
+    _playtime = 0
+    _alive = True
+    _horniness = 0
+    _sleepiness = 0
 
     def __init__(self, name: str):
         self.name = name

@@ -2,7 +2,7 @@ from entities import Hero
 from vn_engine import VNEngine
 
 # =====================================
-# Story Implementation
+# Day 01 - Prologue
 # =====================================
 
 
@@ -35,6 +35,26 @@ On the way, you have to cross the road.
 """)
     vn.wait()
 
+    vn.end_day(2)
+
+
+# =====================================
+# Day 02 - A New Morning
+# =====================================
+
+
+def run_day_002(vn: VNEngine):
+    vn.day_screen(2, "A New Morning")
+
+    name = vn.get("name", "Clayn")
+
+    vn.bottom_text(f"""
+Good Morning, {name}.
+""")
+    vn.wait()
+
+    vn.end_day(3)
+
 
 # =====================================
 # Entry Point
@@ -42,10 +62,22 @@ On the way, you have to cross the road.
 
 
 def main():
+    DAYS = {
+        1: run_day_001,
+        2: run_day_002,
+    }
+
     vn = VNEngine()
 
     try:
-        run_day_001(vn)
+        while True:
+            current_day = vn.get_current_day()
+
+            if current_day in DAYS:
+                DAYS[current_day](vn)
+            else:
+                break
+
     except KeyboardInterrupt:
         print("\nExiting...")
 

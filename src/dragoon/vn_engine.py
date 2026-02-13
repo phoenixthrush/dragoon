@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 class VNEngine:
-    def __init__(self, width=80, padding=2, save_file="choices.json"):
+    def __init__(self, width=80, padding=2, save_file="save.json"):
         self.width = width
         self.padding = padding
         self.save_path = Path(save_file)
@@ -30,7 +30,7 @@ class VNEngine:
     # ==============================
 
     def _wrap_center(self, text: str) -> list[str]:
-        """Wrap text to width and center it horizontally."""
+        """Wrap text to width and center it horizontally"""
         cleaned = textwrap.dedent(text).strip()
         wrapped_lines: list[str] = []
 
@@ -133,3 +133,18 @@ class VNEngine:
             label += f"\n{title}"
         self.banner(label)
         self.wait()
+
+    # ==============================
+    # Day Management
+    # ==============================
+
+    def get_current_day(self):
+        return self.get("current_day", 1)
+
+    def set_current_day(self, day: int):
+        self.set("current_day", day)
+
+    def end_day(self, next_day: int):
+        """Save progress and prepare next day"""
+        self.set_current_day(next_day)
+        self._save()
