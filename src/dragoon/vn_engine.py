@@ -7,22 +7,26 @@ from pathlib import Path
 
 class VNEngine:
     def __init__(self, width=100, padding=2, save_file="save_data.json"):
-        self.width = width
-        self.padding = padding
-        self.save_path = Path(save_file)
-        self.state = self._load()
+        """Initialize the vn engine with terminal width, padding, and save file"""
+        self.width = width  # max width of text
+        self.padding = padding  # blank lines around content
+        self.save_path = Path(save_file)  # where progress will be saved
+        self.state = self._load()  # load saved state or start empty
 
     # ==============================
     # Core Utilities
     # ==============================
 
     def clear(self):
+        """Clear the terminal screen"""
         os.system("cls" if os.name == "nt" else "clear")
 
     def wait(self):
+        """Pause and wait for user to press enter"""
         input()
 
     def _terminal_height(self):
+        """Get the current terminal height in lines"""
         return shutil.get_terminal_size().lines
 
     # ==============================
@@ -36,11 +40,12 @@ class VNEngine:
 
         for raw_line in cleaned.splitlines():
             if not raw_line.strip():
-                wrapped_lines.append("")
+                wrapped_lines.append("")  # preserve empty lines
                 continue
 
             wrapped_lines.extend(textwrap.wrap(raw_line, self.width) or [""])
 
+        # figure out left padding to center non-empty lines
         non_empty_lines = [line for line in wrapped_lines if line.strip()]
         longest_line = max((len(line) for line in non_empty_lines), default=0)
         left_padding = max(0, (self.width - longest_line) // 2)
@@ -55,21 +60,22 @@ class VNEngine:
     # ==============================
 
     def banner(self, text):
+        """Display big banner with text surrounded by lines"""
         self.clear()
+
         print("\n" * self.padding, end="")
         print("=" * self.width)
         print()
+
         for line in self._wrap_center(text):
             print(line)
+
         print()
         print("=" * self.width)
         print("\n" * self.padding, end="")
 
     def bottom_text(self, text, speaker=None):
-        """
-        Display text at the bottom of the screen.
-        Optionally show who is speaking.
-        """
+        """Show text at bottom, optionally with a speaker name"""
         self.clear()
 
         if speaker:
@@ -86,6 +92,7 @@ class VNEngine:
     # ==============================
 
     def _load(self):
+        """Load saved state from json or return empty dict"""
         if not self.save_path.exists():
             return {}
         try:
@@ -94,15 +101,18 @@ class VNEngine:
             return {}
 
     def _save(self):
+        """Save current state to json"""
         self.save_path.write_text(
             json.dumps(self.state, indent=2, ensure_ascii=False), encoding="utf-8"
         )
 
-    def set(self, key, value):
+    def set_value(self, key, value):
+        """Save a value in state and persist"""
         self.state[key] = value
         self._save()
 
     def get(self, key, default=None):
+        """Get a value from state or return default"""
         return self.state.get(key, default)
 
     # ==============================
@@ -110,12 +120,16 @@ class VNEngine:
     # ==============================
 
     def ask_text(self, key, question, default=""):
+        """Ask the player to type text and save it"""
         self.banner(question)
+
         answer = input("> ").strip() or default
-        self.set(key, answer)
+        self.set_value(key, answer)
+
         return answer
 
     def ask_yes_no(self, key, question, default=False):
+        """Ask the player a yes/no question and save result"""
         hint = "Y/n" if default else "y/N"
         self.banner(f"{question}\n[{hint}]")
 
@@ -128,12 +142,12 @@ class VNEngine:
         else:
             value = default
 
-        self.set(key, value)
+        self.set_value(key, value)
         return value
 
     def ask_multiple(self, key, question, options, multiple=False, default=None):
         """
-        Ask the player to select one or more options
+        Ask the player to choose one or more options and save result
 
         Parameters:
         - key: state key to save
@@ -145,9 +159,10 @@ class VNEngine:
 
         self.banner(question)
 
-        # Display options numbered
+        # show each option numbered
         for idx, option in enumerate(options, 1):
             print(f"{idx}. {option}")
+
         print()
 
         while True:
@@ -159,21 +174,25 @@ class VNEngine:
             else:
                 try:
                     if multiple:
-                        # Allow comma-separated numbers
+                        # allow comma-separated numbers
                         indices = [int(x) for x in raw.split(",")]
+
                         if any(i < 1 or i > len(options) for i in indices):
                             raise ValueError
+
                         selection = [options[i - 1] for i in indices]
                     else:
                         idx = int(raw)
+
                         if idx < 1 or idx > len(options):
                             raise ValueError
+
                         selection = options[idx - 1]
                 except ValueError:
                     print("Invalid input. Please enter valid number(s).")
                     continue
 
-            self.set(key, selection)
+            self.set_value(key, selection)
             return selection
 
     # ==============================
@@ -181,9 +200,12 @@ class VNEngine:
     # ==============================
 
     def day_screen(self, number, title=""):
+        """Show day number and optional title in a banner"""
         label = f"Day {number:03d}"
+
         if title:
             label += f"\n{title}"
+
         self.banner(label)
         self.wait()
 
@@ -192,12 +214,14 @@ class VNEngine:
     # ==============================
 
     def get_current_day(self):
+        """Return the current day from state or 1"""
         return self.get("current_day", 1)
 
     def set_current_day(self, day: int):
-        self.set("current_day", day)
+        """Update the current day in state"""
+        self.set_value("current_day", day)
 
     def end_day(self, next_day: int):
-        """Save progress and prepare next day"""
+        """Save progress and move to next day"""
         self.set_current_day(next_day)
         self._save()
